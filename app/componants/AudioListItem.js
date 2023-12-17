@@ -2,22 +2,40 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import React from 'react'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Color from '../misc/Color';
-const AudioListItem = () => {
+
+const getThumbnailText = (filename) => {
+    if (filename && filename.length > 0) {
+        return filename[0];
+    }
+    return ''; // Default value in case of empty filename
+};
+
+const convertTime = (duration) => {
+    const seconds = Math.floor(duration % 60);
+    const minutes = Math.floor((duration / 60) % 60);
+
+    const displaySeconds = seconds < 10 ? `0${seconds}` : seconds;
+    const displayMinutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    return `${displayMinutes}:${displaySeconds}`;
+};
+
+const AudioListItem = ({ title, duration, openOptions }) => {
     return (
         <>
             <View style={styles.container}>
                 <View style={styles.leftContainer}>
                     <View style={styles.thumbnail}>
-                        <Text style={styles.thumbnailText}>a</Text>
+                        <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
                     </View>
                     <View style={styles.titleContainer}>
-                        <Text numberOfLines={1} style={styles.title}>Tighsdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddtle</Text>
-                        <Text numberOfLines={1} style={styles.time}>3.33</Text>
+                        <Text numberOfLines={1} style={styles.title}>{title}</Text>
+                        <Text numberOfLines={1} style={styles.time}>{convertTime(duration)}</Text>
                     </View>
                 </View>
 
                 <View style={styles.rightContainer}>
-                    <SimpleLineIcons name="options-vertical" size={24} color={Color.FONT_MEDIUM} />
+                    <SimpleLineIcons onPress={openOptions} name="options-vertical" size={24} color={Color.FONT_MEDIUM} />
                 </View>
 
             </View>

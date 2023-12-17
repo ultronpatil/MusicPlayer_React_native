@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import { Text, ScrollView, StyleSheet, View, Dimensions } from 'react-native'
 import { AudioContext } from '../context/AudioProvider'
 import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
+import AudioListItem from '../componants/AudioListItem'
+import Screen from '../componants/Screen'
+
+
 export class AudioList extends Component {
     static contextType = AudioContext
 
@@ -18,20 +22,22 @@ export class AudioList extends Component {
 
     })
     rowRenderer = (type, item) => {
-        return (<Text>{item.filename}</Text>)
+        return (<AudioListItem title={item.filename} duration={item.duration} openOptions={() => {
+            console.log("oprning ooptions");
+        }} />)
     }
 
     render() {
         return (
             <AudioContext.Consumer>
                 {({ dataProvider }) => (
-                    <View style={{ flex: 1 }}>
+                    <Screen style={{ flex: 1 }}>
                         <RecyclerListView
                             dataProvider={dataProvider}
                             layoutProvider={this.layoutProvider}
                             rowRenderer={this.rowRenderer}
                         />
-                    </View>
+                    </Screen>
                 )}
             </AudioContext.Consumer>
         );
