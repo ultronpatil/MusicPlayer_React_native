@@ -35,7 +35,7 @@ const AudioListItem = ({ title, duration, openOptions }) => {
                 </View>
 
                 <View style={styles.rightContainer}>
-                    <SimpleLineIcons onPress={openOptions} name="options-vertical" size={24} color={Color.FONT_MEDIUM} />
+                    <SimpleLineIcons style={{ padding: 8 }} onPress={openOptions} name="options-vertical" size={24} color={Color.FONT_MEDIUM} />
                 </View>
 
             </View>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     rightContainer: {
         flexBasis: 50,
         height: 50,
-        // backgroundColor: "yellow",
+        // backgroundColor: "red",
         alignItems: "center",
         justifyContent: "center",
     },
