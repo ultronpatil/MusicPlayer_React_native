@@ -5,14 +5,17 @@ import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
 import AudioListItem from '../componants/AudioListItem'
 import Screen from '../componants/Screen'
 import OptionModal from '../componants/OptionModal'
-
+import { Audio } from 'expo-av'
 export class AudioList extends Component {
     static contextType = AudioContext
 
     constructor(props) {
         super(props);
         this.state = {
-            OptionModalVisible: false
+            OptionModalVisible: false,
+            playbackObj: null,
+            soundObj: null,
+            currentAudio: {}
         };
         this.currentSong = {}
     }
@@ -29,11 +32,35 @@ export class AudioList extends Component {
         }
 
     })
+
+    handleAudioPress = async (audio) => {
+        //play
+        if (this.state.soundObj === null) {
+            const playbackObj = new Audio.Sound()
+            const status = await playbackObj.loadAsync({ uri: audio.uri }, { shouldPlay: true })
+            return this.setState({ ...this.state, currentAudio: audio, playbackObj: playbackObj, soundObj: status })
+        }
+        //pause
+        if (this.state.soundObj.isLoaded && this.state.soundObj.isPlaying) {
+            const status = await this.state.playbackObj.setStatusAsync({ shouldPlay: false })
+            return this.setState({ ...this.state, soundObj: status })
+        }
+        //resume
+        if (this.state.soundObj.isLoaded && !this.state.soundObj.isPlaying && this.state.currentAudio.id === audio.id) {
+            const status = await this.state.playbackObj.playAsync()
+            return this.setState({ ...this.state, soundObj: status })
+        }
+
+    }
+
+
+
     rowRenderer = (type, item) => {
         return (
             <AudioListItem
                 title={item.filename}
                 duration={item.duration}
+                onAudioPress={() => this.handleAudioPress(item)}
                 openOptions={() => {
                     this.currentSong = item;
                     this.setState({ ...this.state, OptionModalVisible: true })

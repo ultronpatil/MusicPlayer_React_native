@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Dimensions, Touchable, TouchableWithoutFeedback } from 'react-native'
 import React from 'react'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Color from '../misc/Color';
@@ -20,19 +20,21 @@ const convertTime = (duration) => {
     return `${displayMinutes}:${displaySeconds}`;
 };
 
-const AudioListItem = ({ title, duration, openOptions }) => {
+const AudioListItem = ({ title, duration, openOptions, onAudioPress }) => {
     return (
         <>
             <View style={styles.container}>
-                <View style={styles.leftContainer}>
-                    <View style={styles.thumbnail}>
-                        <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
+                <TouchableWithoutFeedback onPress={onAudioPress}>
+                    <View style={styles.leftContainer}>
+                        <View style={styles.thumbnail}>
+                            <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
+                        </View>
+                        <View style={styles.titleContainer}>
+                            <Text numberOfLines={1} style={styles.title}>{title}</Text>
+                            <Text numberOfLines={1} style={styles.time}>{convertTime(duration)}</Text>
+                        </View>
                     </View>
-                    <View style={styles.titleContainer}>
-                        <Text numberOfLines={1} style={styles.title}>{title}</Text>
-                        <Text numberOfLines={1} style={styles.time}>{convertTime(duration)}</Text>
-                    </View>
-                </View>
+                </TouchableWithoutFeedback>
 
                 <View style={styles.rightContainer}>
                     <SimpleLineIcons style={{ padding: 8 }} onPress={openOptions} name="options-vertical" size={24} color={Color.FONT_MEDIUM} />
