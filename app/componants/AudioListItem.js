@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, Dimensions, Touchable, TouchableWithoutFeedback
 import React from 'react'
 import { SimpleLineIcons } from '@expo/vector-icons';
 import Color from '../misc/Color';
+import { Entypo } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 const getThumbnailText = (filename) => {
     if (filename && filename.length > 0) {
@@ -20,14 +22,21 @@ const convertTime = (duration) => {
     return `${displayMinutes}:${displaySeconds}`;
 };
 
-const AudioListItem = ({ title, duration, openOptions, onAudioPress }) => {
+renderPlayPauseIcon = (isPlaying) => {
+    if (isPlaying) return <Entypo name="controller-paus" size={24} color="white" />
+    return <Ionicons name="play" size={24} color="white" />
+}
+
+const AudioListItem = ({ title, duration, openOptions, onAudioPress, isPlaying, activeThumbnail }) => {
     return (
         <>
             <View style={styles.container}>
                 <TouchableWithoutFeedback onPress={onAudioPress}>
                     <View style={styles.leftContainer}>
-                        <View style={styles.thumbnail}>
-                            <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
+                        <View style={[styles.thumbnail, { backgroundColor: activeThumbnail ? Color.ACTIVE_BG : Color.FONT_LIGHT }]}>
+                            <Text style={styles.thumbnailText}>
+                                {activeThumbnail ? renderPlayPauseIcon(isPlaying) : getThumbnailText(title)}
+                            </Text>
                         </View>
                         <View style={styles.titleContainer}>
                             <Text numberOfLines={1} style={styles.title}>{title}</Text>
@@ -73,7 +82,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.FONT_LIGHT,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 25
+        borderRadius: 10
     },
     thumbnailText: {
         fontSize: 20,
