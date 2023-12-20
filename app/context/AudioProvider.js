@@ -17,8 +17,11 @@ export class AudioProvider extends Component {
             currentAudio: {},
             isPlaying: false,
             currentAudioIndex: null,
+            playbackPosition: null,
+            playbackDuration: null,
 
-        }
+        };
+        this.totalAudioCount = 0
     }
 
     permissionAlert = () => {
@@ -38,9 +41,12 @@ export class AudioProvider extends Component {
             mediaType: 'audio',
             first: media.totalCount,
         })
-        console.log(media);
+        this.totalAudioCount = media.totalCount
         this.setState({ ...this.state, dataProvider: dataProvider.cloneWithRows([...AudioFiles, ...media.assets]), AudioFiles: [...AudioFiles, ...media.assets] })
     }
+
+
+
     // Inside getPermission method:
     getPermission = async () => {
         try {
@@ -79,7 +85,7 @@ export class AudioProvider extends Component {
     }
 
     render() {
-        const { AudioFiles, dataProvider, permissionError, playbackObj, soundObj, currentAudio, isPlaying, currentAudioIndex } = this.state
+        const { AudioFiles, dataProvider, permissionError, playbackObj, soundObj, currentAudio, isPlaying, currentAudioIndex, playbackPosition, playbackDuration } = this.state
         if (permissionError) {
             return (
                 <View style={{
@@ -103,8 +109,11 @@ export class AudioProvider extends Component {
             soundObj,
             currentAudio,
             isPlaying,
-            updateState: this.updateState,
             currentAudioIndex,
+            totalAudioCount: this.totalAudioCount,
+            playbackPosition,
+            playbackDuration,
+            updateState: this.updateState,
         }}>
             {this.props.children}
         </AudioContext.Provider>
