@@ -7,7 +7,7 @@ import Screen from '../componants/Screen'
 import OptionModal from '../componants/OptionModal'
 import { Audio } from 'expo-av'
 import { play, pause, resume, next } from '../misc/AudioController'
-
+import { storeAudioForNextOpening } from '../misc/Helper'
 
 export class AudioList extends Component {
     static contextType = AudioContext
@@ -43,26 +43,30 @@ export class AudioList extends Component {
         if (playbackStatus.didJustFinish) {
             const nextAudioIndex = this.context.currentAudioIndex + 1;
 
-            //no next adui to play 
-            if (nextAudioIndex >= this.context.totalAudio) {
+            //no next audio to play 
+            if (nextAudioIndex >= this.context.totalAudioCount) {
                 this.context.playbackObj.unloadAsync();
-                this.context.playbackObj.unloadAsync();
-                return this.context.updateState(this.context, {
-                    soundObj: status,
+                this.context.updateState(this.context, {
+                    soundObj: null,
                     currentAudio: this.context.AudioFiles[0],
                     isPlaying: false,
+                    currentAudioIndex: 0,
                     playbackPosition: null,
                     playbackDuration: null
                 })
+                await storeAudioForNextOpening(this.context.AudioFiles[0], 0);
             }
+
+            //otherwise there is audio is to play
             const audio = this.context.AudioFiles[nextAudioIndex];
             const status = await next(this.context.playbackObj, audio.uri)
-            return this.context.updateState(this.context, {
+            this.context.updateState(this.context, {
                 soundObj: status,
                 currentAudio: audio,
                 isPlaying: true,
                 currentAudioIndex: nextAudioIndex,
             })
+            await storeAudioForNextOpening(audio, nextAudioIndex);
         }
 
     }
@@ -81,7 +85,9 @@ export class AudioList extends Component {
                 isPlaying: true,
                 currentAudioIndex: index
             });
-            return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+            playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+            return storeAudioForNextOpening(audio, index)
+
 
         }
         //pause
@@ -99,11 +105,15 @@ export class AudioList extends Component {
         if (soundObj.isLoaded && currentAudio.id !== audio.id) {
             const status = await next(playbackObj, audio.uri);
             const index = AudioFiles.indexOf(audio)
-            return updateState(this.context, { currentAudio: audio, soundObj: status, isPlaying: true, currentAudioIndex: index });
-
+            updateState(this.context, { currentAudio: audio, soundObj: status, isPlaying: true, currentAudioIndex: index });
+            return storeAudioForNextOpening(audio, index)
 
         }
 
+    }
+
+    componentDidMount() {
+        this.context.loadPreviousSong()
     }
 
 
@@ -126,21 +136,24 @@ export class AudioList extends Component {
     render() {
         return (
             <AudioContext.Consumer>
-                {({ dataProvider, isPlaying }) => (
-                    <Screen style={{ flex: 1 }}>
-                        <RecyclerListView
-                            dataProvider={dataProvider}
-                            layoutProvider={this.layoutProvider}
-                            rowRenderer={this.rowRenderer}
-                            extendedState={{ isPlaying }}
-                        />
-                        <OptionModal
-                            onPlayPress={() => console.log("plaing song")}
-                            onPlaylistPress={() => console.log("added to playlist")}
-                            currentSong={this.currentSong}
-                            onClose={() => this.setState({ ...this.state, OptionModalVisible: false })} visible={this.state.OptionModalVisible}></OptionModal>
-                    </Screen>
-                )
+                {({ dataProvider, isPlaying }) => {
+                    if (!dataProvider._data.length) return null;
+                    return (
+                        <Screen style={{ flex: 1 }}>
+                            <RecyclerListView
+                                dataProvider={dataProvider}
+                                layoutProvider={this.layoutProvider}
+                                rowRenderer={this.rowRenderer}
+                                extendedState={{ isPlaying }}
+                            />
+                            <OptionModal
+                                onPlayPress={() => console.log("plaing song")}
+                                onPlaylistPress={() => console.log("added to playlist")}
+                                currentSong={this.currentSong}
+                                onClose={() => this.setState({ ...this.state, OptionModalVisible: false })} visible={this.state.OptionModalVisible}></OptionModal>
+                        </Screen>
+                    )
+                }
                 }
             </AudioContext.Consumer>
         );

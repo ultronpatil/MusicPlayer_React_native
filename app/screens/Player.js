@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import Screen from '../componants/Screen';
 import Color from '../misc/Color';
@@ -17,9 +17,13 @@ const Player = () => {
             return playbackPosition / playbackDuration;
         }
         return 0;
-    }
+    };
 
 
+    useEffect(() => {
+        context.loadPreviousSong();
+    }, [])
+    if (!context.currentAudio) return null;
     return (
         <Screen>
             <View style={styles.container}>
