@@ -4,7 +4,7 @@ export const play = async (playbackObj, uri) => {
         return await playbackObj.loadAsync({ uri }, { shouldPlay: true })
     }
     catch (error) {
-        console.log('error while plying');
+        console.log('error while plying', error.message);
     }
 }
 
