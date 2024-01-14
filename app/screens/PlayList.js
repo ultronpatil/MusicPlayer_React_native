@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Color from '../misc/Color';
+import PlayListInputModal from '../componants/PlayListInputModal';
 
 const PlayList = () => {
+
+    const [modalVisible, setModalVisible] = useState(false);
+
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <TouchableOpacity style={styles.playlistBanner}>
@@ -12,11 +16,15 @@ const PlayList = () => {
 
 
             <TouchableOpacity
-                onPress={() => console.log('new playlist added')}
+                onPress={() => setModalVisible(true)}
                 style={{ marginTop: 15 }}>
                 <Text style={styles.playlistButton}>+ Add New Playlist</Text>
             </TouchableOpacity>
-
+            <PlayListInputModal
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onSubmit={console.log("playlist saved")}
+            />
 
         </ScrollView>
     )
