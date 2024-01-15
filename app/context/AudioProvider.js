@@ -13,6 +13,8 @@ export class AudioProvider extends Component {
         super(props)
         this.state = {
             AudioFiles: [],
+            playlist: [],
+            addToPlaylist: null,
             permissionError: false,
             dataProvider: new DataProvider((r1, r2) => r1 !== r2),
             playbackObj: null,
@@ -148,7 +150,18 @@ export class AudioProvider extends Component {
     }
 
     render() {
-        const { AudioFiles, dataProvider, permissionError, playbackObj, soundObj, currentAudio, isPlaying, currentAudioIndex, playbackPosition, playbackDuration } = this.state
+        const { AudioFiles,
+            playlist,
+            addToPlaylist,
+            dataProvider,
+            permissionError,
+            playbackObj,
+            soundObj,
+            currentAudio,
+            isPlaying,
+            currentAudioIndex,
+            playbackPosition,
+            playbackDuration } = this.state
         if (permissionError) {
             return (
                 <View style={{
@@ -167,6 +180,8 @@ export class AudioProvider extends Component {
 
         return <AudioContext.Provider value={{
             AudioFiles,
+            playlist,
+            addToPlaylist,
             dataProvider,
             playbackObj,
             soundObj,

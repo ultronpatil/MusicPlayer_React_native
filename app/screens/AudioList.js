@@ -148,7 +148,11 @@ export class AudioList extends Component {
                             />
                             <OptionModal
                                 onPlayPress={() => console.log("plaing song")}
-                                onPlaylistPress={() => this.props.navigation.navigate('PlayList')}
+                                onPlaylistPress={() => {
+                                    this.context.updateState(this.context, { addToPlaylist: this.currentItem, })
+                                    this.props.navigation.navigate('PlayList')
+                                }
+                                }
                                 currentSong={this.currentSong}
                                 onClose={() => this.setState({ ...this.state, OptionModalVisible: false })} visible={this.state.OptionModalVisible}></OptionModal>
                         </Screen>
